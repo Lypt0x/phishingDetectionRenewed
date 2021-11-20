@@ -11,6 +11,7 @@ twilight-gateway = "0.7.1"
 twilight-http = "0.7.1"
 twilight-model = "0.7.1"
 twilight-cache-inmemory = {version = "0.7.1", features = ["permission-calculator"]}
+twilight-interactions = "0.7.1"
 
 tokio = {version = "1", features = ["full"] }
 futures = "0.3.17"

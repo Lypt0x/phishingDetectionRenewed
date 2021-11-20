@@ -7,6 +7,7 @@ use twilight_model::channel::Message;
 use twilight_http::Client;
 use anyhow::Result;
 
+/* LEGACY COMMANDS */
 
 #[async_trait::async_trait]
 pub trait MessageParser {
