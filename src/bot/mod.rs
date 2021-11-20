@@ -18,7 +18,7 @@ use anyhow::Result;
 
 use twilight_cache_inmemory::permission::InMemoryCachePermissions;
 
-pub async fn start_message_cluster<'a>(parser_config: CommandParserConfig<'static>, safe: Safe, token: String) -> Result<()> {
+pub async fn start_message_cluster(parser_config: CommandParserConfig<'static>, safe: Safe, token: String) -> Result<()> {
     let message_cluster = Arc::new(MessageCluster::new(parser_config, token).await?);
     message_cluster.start_cluster()?;
 
