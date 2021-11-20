@@ -18,8 +18,7 @@ mod deny;
 mod allow;
 
 pub async fn init(client: &Client) -> Result<()> {
-    
-    client.set_application_id(ApplicationId::new(802929155049914468).expect("Invalid application id"));
+    client.set_application_id(ApplicationId::new(std::env::var("APP")?.parse()?).expect("Invalid application id"));
     client.set_global_commands(&[
         denied::DeniedCommand::create_command().into(),
         deny::DenyCommand::create_command().into(),
