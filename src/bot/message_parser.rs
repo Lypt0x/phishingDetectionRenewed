@@ -1,3 +1,4 @@
+use linkify::LinkFinder;
 use crate::rest::SafeData;
 use linkify::Link;
 use twilight_command_parser::Parser;
