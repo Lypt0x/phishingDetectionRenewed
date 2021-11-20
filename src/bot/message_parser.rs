@@ -50,12 +50,12 @@ pub trait MessageParser {
                     if let Some(data) = self.is_denied(link, safe).await.expect("data") {
                         if data.safe {
                             client.create_message(message.channel_id)
-                            .content("Url is not denied").expect("message")
+                            .content("URL is not denied").expect("message")
                             .exec()
                             .await.expect("message");
                         } else {
                             client.create_message(message.channel_id)
-                            .content(&format!("Url is denied at {}", self.format_date(data.time))).expect("message")
+                            .content(&format!("URL is denied at {}", self.format_date(data.time))).expect("message")
                             .exec()
                             .await.expect("message");
                         }
@@ -98,12 +98,12 @@ pub trait MessageParser {
                 if safe.is_denied(url.as_str()).unwrap() {
                     safe.allow(url.as_str()).unwrap();
                     client.create_message(message.channel_id)
-                        .content("Url has been allowed").expect("message")
+                        .content("URL has been allowed").expect("message")
                         .exec()
                         .await.expect("message");
                 } else {
                     client.create_message(message.channel_id)
-                        .content("Url is not denied").expect("message")
+                        .content("URL is not denied").expect("message")
                         .exec()
                         .await.expect("message");
                 }
@@ -124,13 +124,13 @@ pub trait MessageParser {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
                     client.create_message(message.channel_id)
-                        .content("Url is already denied").expect("message")
+                        .content("URL is already denied").expect("message")
                         .exec()
                         .await.expect("message");
                 } else {
                     safe.deny(url.as_str()).unwrap();
                     client.create_message(message.channel_id)
-                        .content("Url has been denied").expect("message")
+                        .content("URL has been denied").expect("message")
                         .exec()
                         .await.expect("message");
                 }

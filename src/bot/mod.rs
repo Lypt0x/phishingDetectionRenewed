@@ -65,24 +65,18 @@ pub async fn start_message_cluster<'a>(parser_config: CommandParserConfig<'stati
                 });
             },
             Event::InteractionCreate(interaction) => {
-                let inter: Interaction = interaction.0;
-                match inter {
-                    Interaction::ApplicationCommand(command) => {
-                        let client: &Client = &message_cluster.client;
-                        let command: ApplicationCommand = *command;
-                        
-                        client.interaction_callback(command.id, &command.token,
-                            &InteractionResponse::ChannelMessageWithSource(CallbackData {
-                                allowed_mentions: None,
-                                components: None,
-                                content: Some("heyo".to_string()),
-                                embeds: vec![],
-                                flags: None,
-                                tts: None
-                        })).exec().await.expect("callback");
-                    },
-                    _ => ()
-                }
+                tokio::spawn(async move {
+                    let inter: Interaction = interaction.0;
+                    match inter {
+                        Interaction::ApplicationCommand(command) => {
+                            let client: &Client = &message_cluster.client;
+                            let command: ApplicationCommand = *command;
+
+                            commands::handle_command(command, client, Arc::clone(&safe)).await;
+                        },
+                        _ => ()
+                    }
+                });
             }
             _ => {}
         }
