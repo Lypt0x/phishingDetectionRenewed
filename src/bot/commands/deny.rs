@@ -1,3 +1,4 @@
+use url::Url;
 use twilight_model::application::callback::CallbackData;
 use twilight_model::application::callback::InteractionResponse;
 use crate::Safe;
@@ -6,7 +7,6 @@ use anyhow::Result;
 use std::sync::Arc;
 use twilight_http::Client;
 use twilight_model::application::interaction::ApplicationCommand;
-use linkify::Link;
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 #[derive(CommandModel, CreateCommand)]
@@ -17,9 +17,11 @@ pub struct DenyCommand {
 }
 
 impl DenyCommand {
-    pub async fn deny(&self, link: Option<Link<'_>>, command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<bool> {
+    pub async fn deny(&self, command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<bool> {
+        let link = Url::parse(&self.url);
+
         match link {
-            Some(url) => {
+            Ok(url) => {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
                     client.interaction_callback(command.id, &command.token,
@@ -44,7 +46,7 @@ impl DenyCommand {
                         })).exec().await.expect("callback");
                 }
             },
-            None => {
+            Err(_) => {
                 client.interaction_callback(command.id, &command.token,
                     &InteractionResponse::ChannelMessageWithSource(CallbackData {
                         allowed_mentions: None,

@@ -1,3 +1,4 @@
+use url::Url;
 use twilight_model::application::callback::CallbackData;
 use twilight_model::application::interaction::ApplicationCommand;
 use twilight_model::application::callback::InteractionResponse;
@@ -17,9 +18,11 @@ pub struct AllowCommand {
 }
 
 impl AllowCommand {
-    pub async fn allow(&self, link: Option<Link<'_>>, command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<bool> {
+    pub async fn allow(&self, command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<bool> {
+        let link = Url::parse(&self.url);
+
         match link {
-            Some(url) => {
+            Ok(url) => {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
                     safe.allow(url.as_str()).unwrap();
@@ -44,7 +47,7 @@ impl AllowCommand {
                         })).exec().await.expect("callback");
                 }
             },
-            None => {
+            Err(_) => {
                 client.interaction_callback(command.id, &command.token,
                     &InteractionResponse::ChannelMessageWithSource(CallbackData {
                         allowed_mentions: None,

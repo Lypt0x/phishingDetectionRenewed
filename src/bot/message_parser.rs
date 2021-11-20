@@ -42,7 +42,7 @@ pub trait MessageParser {
                 },
 
                 Some(Command {
-                    name: "is_denied", mut arguments, ..
+                    name: "denied", mut arguments, ..
                 }) => {
                     if arguments.clone().count() == 0 { return Ok(true); }
                     let link = finder.links(arguments.next().expect("next argument")).nth(0);

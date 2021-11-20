@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
     command_parser.add_prefix("!");
     command_parser.add_command("deny", false);
     command_parser.add_command("allow", false);
-    command_parser.add_command("is_denied", false);
+    command_parser.add_command("denied", false);
 
     bot::start_message_cluster(command_parser, safe, std::env::var("DISCORD_TOKEN")?).await?;
 

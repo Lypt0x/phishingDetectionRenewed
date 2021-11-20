@@ -72,7 +72,7 @@ pub async fn start_message_cluster<'a>(parser_config: CommandParserConfig<'stati
                             let client: &Client = &message_cluster.client;
                             let command: ApplicationCommand = *command;
 
-                            commands::handle_command(command, client, Arc::clone(&safe)).await;
+                            commands::handle_command(command, client, Arc::clone(&safe)).await.expect("handle command");
                         },
                         _ => ()
                     }

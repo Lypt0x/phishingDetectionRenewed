@@ -1,3 +1,5 @@
+use crate::bot::commands::allow::AllowCommand;
+use crate::bot::commands::deny::DenyCommand;
 use twilight_model::application::callback::InteractionResponse;
 use twilight_model::application::callback::CallbackData;
 use crate::bot::commands::denied::DeniedCommand;
@@ -39,7 +41,6 @@ pub async fn handle_command(command: ApplicationCommand, client: &Client, safe: 
     let interaction_name = &command.data.name;
     match interaction_name.as_str() {
         "denied" => {
-
             let denied_command: DeniedCommand = DeniedCommand::from_interaction(command.data).expect("parse command");
             if let Some(data) = denied_command.is_denied(safe).await? {
                 if data.safe {
@@ -68,9 +69,13 @@ pub async fn handle_command(command: ApplicationCommand, client: &Client, safe: 
             Ok(())
         },
         "deny" => {
+            let deny_command: DenyCommand = DenyCommand::from_interaction(command.clone().data).expect("parse command");
+            deny_command.deny(command, &client, safe).await?;
             Ok(())
         },
         "allow" => {
+            let allow_command: AllowCommand = AllowCommand::from_interaction(command.clone().data).expect("parse command");
+            allow_command.allow(command, &client, safe).await?;
             Ok(())
         },
         _ => Ok(()),
