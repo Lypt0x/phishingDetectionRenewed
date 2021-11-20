@@ -6,9 +6,9 @@ use tokio::sync::RwLock;
 use std::sync::Arc;
 use anyhow::Result;
 use futures::StreamExt;
-use crate::bot::message_cluster::MessageCluster;
-use crate::bot::message_parser::MessageParser;
-use crate::bot::message_prepare::MessagePrepare;
+use crate::bot::cluster::MessageCluster;
+use crate::bot::parser::MessageParser;
+use crate::bot::preparer::MessagePrepare;
 use twilight_gateway::Event;
 
 use crate::bot::commands::handle_command;

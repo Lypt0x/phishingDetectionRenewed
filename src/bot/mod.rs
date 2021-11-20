@@ -1,19 +1,19 @@
-mod events_handling;
-mod message_parser;
-mod message_prepare;
-mod message_cluster;
+mod handling;
+mod parser;
+mod preparer;
+mod cluster;
 mod commands;
 
-use crate::bot::message_parser::MessageParser;
-use crate::bot::events_handling::EventHandler;
+use crate::bot::parser::MessageParser;
+use crate::bot::handling::EventHandler;
 use twilight_model::guild::Permissions;
 use twilight_command_parser::Command;
 use twilight_command_parser::CommandParserConfig;
 use tokio::sync::RwLock;
 use std::sync::Arc;
 use crate::rest::Safe;
-use crate::bot::message_prepare::MessagePrepare;
-use crate::bot::message_cluster::MessageCluster;
+use crate::bot::preparer::MessagePrepare;
+use crate::bot::cluster::MessageCluster;
 use anyhow::Result;
 
 use twilight_cache_inmemory::permission::InMemoryCachePermissions;
