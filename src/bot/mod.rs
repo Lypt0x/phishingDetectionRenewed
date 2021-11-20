@@ -5,8 +5,6 @@ mod commands;
 
 use twilight_model::application::interaction::Interaction;
 use twilight_model::application::interaction::application_command::ApplicationCommand;
-use twilight_model::application::callback::InteractionResponse;
-use twilight_model::application::callback::CallbackData;
 
 use twilight_http::client::Client;
 use crate::bot::message_parser::MessageParser;
@@ -35,7 +33,6 @@ pub async fn start_message_cluster<'a>(parser_config: CommandParserConfig<'stati
     let safe = Arc::new(RwLock::new(safe));
 
     while let Some((_shard_id, event)) = events.next().await {
-        println!("Event: {:?}", event);
         let cache = &message_cluster.cache;
         cache.update(&event);
         

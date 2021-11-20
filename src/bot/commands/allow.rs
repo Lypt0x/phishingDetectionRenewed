@@ -7,7 +7,6 @@ use anyhow::Result;
 use tokio::sync::RwLock;
 use std::sync::Arc;
 use twilight_http::Client;
-use linkify::Link;
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 #[derive(CommandModel, CreateCommand)]
