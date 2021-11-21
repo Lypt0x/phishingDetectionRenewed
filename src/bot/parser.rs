@@ -8,6 +8,8 @@ use twilight_model::channel::Message;
 use twilight_http::Client;
 use anyhow::Result;
 
+use crate::bot::utils::message::MessageReply;
+
 /* LEGACY COMMANDS */
 
 #[async_trait::async_trait]
@@ -50,15 +52,9 @@ pub trait MessageParser {
 
                     if let Some(data) = self.is_denied(link, safe).await.expect("data") {
                         if data.safe {
-                            client.create_message(message.channel_id)
-                            .content("URL is not denied").expect("message")
-                            .exec()
-                            .await.expect("message");
+                            client.reply_message(message.channel_id, "URL is not denied").await.expect("reply");
                         } else {
-                            client.create_message(message.channel_id)
-                            .content(&format!("URL is denied at {}", self.format_date(data.time))).expect("message")
-                            .exec()
-                            .await.expect("message");
+                            client.reply_message(message.channel_id, &format!("URL is denied at {}", self.format_date(data.time))).await.expect("reply");
                         }
                  
                     }
@@ -98,22 +94,13 @@ pub trait MessageParser {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
                     safe.allow(url.as_str()).unwrap();
-                    client.create_message(message.channel_id)
-                        .content("URL has been allowed").expect("message")
-                        .exec()
-                        .await.expect("message");
+                    client.reply_message(message.channel_id, "URL has been allowed").await.expect("reply");
                 } else {
-                    client.create_message(message.channel_id)
-                        .content("URL is not denied").expect("message")
-                        .exec()
-                        .await.expect("message");
+                    client.reply_message(message.channel_id, "URL is not denied").await.expect("reply");
                 }
             },
             None => {
-                client.create_message(message.channel_id)
-                    .content("Invalid URL").expect("message")
-                    .exec()
-                    .await.expect("message");
+                client.reply_message(message.channel_id, "No URL provided").await.expect("reply");
             }
         }
         Ok(false)
@@ -124,23 +111,14 @@ pub trait MessageParser {
             Some(url) => {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
-                    client.create_message(message.channel_id)
-                        .content("URL is already denied").expect("message")
-                        .exec()
-                        .await.expect("message");
+                    client.reply_message(message.channel_id, "URL is already denied").await.expect("reply");
                 } else {
                     safe.deny(url.as_str()).unwrap();
-                    client.create_message(message.channel_id)
-                        .content("URL has been denied").expect("message")
-                        .exec()
-                        .await.expect("message");
+                    client.reply_message(message.channel_id, "URL has been denied").await.expect("reply");
                 }
             },
             None => {
-                client.create_message(message.channel_id)
-                    .content("Invalid URL").expect("message")
-                    .exec()
-                    .await.expect("message");
+                client.reply_message(message.channel_id, "No URL provided").await.expect("reply");
             }
         }
         Ok(false)

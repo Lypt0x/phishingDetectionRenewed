@@ -24,14 +24,14 @@ impl DenyCommand {
             Ok(url) => {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
-                    client.reply_content(&command, "URL is already denied").await.expect("reply");
+                    client.reply_interaction(&command, "URL is already denied").await.expect("reply");
                 } else {
                     safe.deny(url.as_str()).unwrap();
-                    client.reply_content(&command, "URL has been denied").await.expect("reply");
+                    client.reply_interaction(&command, "URL has been denied").await.expect("reply");
                 }
             },
             Err(_) => {
-                client.reply_content(&command, "Invalid URL. Example: `https://example.com`").await.expect("reply");
+                client.reply_interaction(&command, "Invalid URL. Example: `https://example.com`").await.expect("reply");
             }
         }
         Ok(())

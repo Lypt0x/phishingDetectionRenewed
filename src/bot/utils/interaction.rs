@@ -4,5 +4,5 @@ use anyhow::Result;
 
 #[async_trait::async_trait]
 pub trait InteractionReply {
-    async fn reply_content(&self, command: &ApplicationCommand, content: &str) -> Result<()>;
+    async fn reply_interaction(&self, command: &ApplicationCommand, content: &str) -> Result<()>;
 }

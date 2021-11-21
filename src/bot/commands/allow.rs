@@ -25,13 +25,13 @@ impl AllowCommand {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
                     safe.allow(url.as_str()).unwrap();
-                    client.reply_content(&command, "URL has been allowed").await.expect("reply");
+                    client.reply_interaction(&command, "URL has been allowed").await.expect("reply");
                 } else {
-                    client.reply_content(&command, "URL is already allowed").await.expect("reply");
+                    client.reply_interaction(&command, "URL is already allowed").await.expect("reply");
                 }
             },
             Err(_) => {
-                client.reply_content(&command, "Invalid URL. Example: `https://example.com`").await.expect("reply");
+                client.reply_interaction(&command, "Invalid URL. Example: `https://example.com`").await.expect("reply");
             }
         }
         Ok(())

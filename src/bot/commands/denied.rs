@@ -25,9 +25,9 @@ impl DeniedCommand {
     pub async fn is_denied_reply(&self, client: &Client, command: &ApplicationCommand, safe: Arc<RwLock<Safe>>) -> Result<()> {
         if let Some(safe_data) = self.is_denied(safe).await? {
             if safe_data.safe {
-                client.reply_content(&command, "URL is not denied").await.expect("reply");
+                client.reply_interaction(&command, "URL is not denied").await.expect("reply");
             } else {
-                client.reply_content(&command, &format!("URL is denied at {}", format_date(safe_data.time))).await.expect("reply");
+                client.reply_interaction(&command, &format!("URL is denied at {}", format_date(safe_data.time))).await.expect("reply");
             }
         }
 
