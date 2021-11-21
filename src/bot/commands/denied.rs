@@ -10,7 +10,7 @@ use twilight_interactions::command::{CommandModel, CreateCommand};
 use crate::bot::utils::interaction::InteractionReply;
 
 #[derive(CommandModel, CreateCommand)]
-#[command(name = "denied", desc = "Check if a URL has been denied")]
+#[command(name = "denied", desc = "Check whether a specified URL has been denied.")]
 pub struct DeniedCommand {
     /// The URL to check
     url: String,
