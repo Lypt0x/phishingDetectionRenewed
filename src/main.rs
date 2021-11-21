@@ -11,7 +11,7 @@ async fn main() -> Result<()> {
     println!("Starting");
 
     let mut command_parser = CommandParserConfig::new();
-    command_parser.add_prefix("!");
+    command_parser.add_prefix("+");
     command_parser.add_command("deny", false);
     command_parser.add_command("allow", false);
     command_parser.add_command("denied", false);
