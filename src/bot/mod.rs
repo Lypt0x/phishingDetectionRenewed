@@ -3,6 +3,7 @@ mod parser;
 mod preparer;
 mod cluster;
 mod commands;
+pub mod utils;
 
 use crate::bot::parser::MessageParser;
 use crate::bot::handling::EventHandler;

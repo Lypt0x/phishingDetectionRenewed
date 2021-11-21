@@ -1,7 +1,5 @@
 use crate::bot::commands::allow::AllowCommand;
 use crate::bot::commands::deny::DenyCommand;
-use twilight_model::application::callback::InteractionResponse;
-use twilight_model::application::callback::CallbackData;
 use crate::bot::commands::denied::DeniedCommand;
 use crate::Safe;
 use anyhow::Result;
@@ -28,55 +26,26 @@ pub async fn init(client: &Client) -> Result<()> {
     Ok(())
 }
 
-// format UTC+1
-fn format_date(time: i64) -> String {
-    let date = chrono::DateTime::<chrono::Utc>::from_utc(
-        chrono::NaiveDateTime::from_timestamp(time / 1000 + 3600, 0), chrono::Utc);
-    date.format("%Y-%m-%d %H:%M:%S").to_string()
-}
-
 pub async fn handle_command(command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<()> {
  
     let interaction_name = &command.data.name;
     match interaction_name.as_str() {
-        "denied" => {
-            let denied_command: DeniedCommand = DeniedCommand::from_interaction(command.data).expect("parse command");
-            if let Some(data) = denied_command.is_denied(safe).await? {
-                if data.safe {
-                    client.interaction_callback(command.id, &command.token,
-                        &InteractionResponse::ChannelMessageWithSource(CallbackData {
-                            allowed_mentions: None,
-                            components: None,
-                            content: Some("URL is not denied".to_string()),
-                            embeds: vec![],
-                            flags: None,
-                            tts: None
-                    })).exec().await.expect("callback");
-                } else {
-                    client.interaction_callback(command.id, &command.token,
-                        &InteractionResponse::ChannelMessageWithSource(CallbackData {
-                            allowed_mentions: None,
-                            components: None,
-                            content: Some(format!("URL is denied at {}", format_date(data.time))),
-                            embeds: vec![],
-                            flags: None,
-                            tts: None
-                    })).exec().await.expect("callback");
-                }
-            }
 
-            Ok(())
+        "denied" => {
+            let denied_command: DeniedCommand = DeniedCommand::from_interaction(command.clone().data)?;
+            Ok(denied_command.is_denied_reply(client, &command, safe).await?)
         },
+
         "deny" => {
-            let deny_command: DenyCommand = DenyCommand::from_interaction(command.clone().data).expect("parse command");
-            deny_command.deny(command, &client, safe).await?;
-            Ok(())
+            let deny_command: DenyCommand = DenyCommand::from_interaction(command.clone().data)?;
+            Ok(deny_command.deny(command, &client, safe).await?)
         },
+
         "allow" => {
-            let allow_command: AllowCommand = AllowCommand::from_interaction(command.clone().data).expect("parse command");
-            allow_command.allow(command, &client, safe).await?;
-            Ok(())
+            let allow_command: AllowCommand = AllowCommand::from_interaction(command.clone().data)?;
+            Ok(allow_command.allow(command, &client, safe).await?)
         },
+
         _ => Ok(()),
     }
 }

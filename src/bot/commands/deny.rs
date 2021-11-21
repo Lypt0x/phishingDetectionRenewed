@@ -1,6 +1,4 @@
 use url::Url;
-use twilight_model::application::callback::CallbackData;
-use twilight_model::application::callback::InteractionResponse;
 use crate::Safe;
 use tokio::sync::RwLock;
 use anyhow::Result;
@@ -8,6 +6,8 @@ use std::sync::Arc;
 use twilight_http::Client;
 use twilight_model::application::interaction::ApplicationCommand;
 use twilight_interactions::command::{CommandModel, CreateCommand};
+
+use crate::bot::utils::interaction::InteractionReply;
 
 #[derive(CommandModel, CreateCommand)]
 #[command(name = "deny", desc = "Deny a URL")]
@@ -17,47 +17,23 @@ pub struct DenyCommand {
 }
 
 impl DenyCommand {
-    pub async fn deny(&self, command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<bool> {
+    pub async fn deny(&self, command: ApplicationCommand, client: &Client, safe: Arc<RwLock<Safe>>) -> Result<()> {
         let link = Url::parse(&self.url);
 
         match link {
             Ok(url) => {
                 let mut safe = safe.write().await;
                 if safe.is_denied(url.as_str()).unwrap() {
-                    client.interaction_callback(command.id, &command.token,
-                        &InteractionResponse::ChannelMessageWithSource(CallbackData {
-                            allowed_mentions: None,
-                            components: None,
-                            content: Some("URL is already denied".to_string()),
-                            embeds: vec![],
-                            flags: None,
-                            tts: None
-                        })).exec().await.expect("callback");
+                    client.reply_content(&command, "URL is already denied").await.expect("reply");
                 } else {
                     safe.deny(url.as_str()).unwrap();
-                    client.interaction_callback(command.id, &command.token,
-                        &InteractionResponse::ChannelMessageWithSource(CallbackData {
-                            allowed_mentions: None,
-                            components: None,
-                            content: Some("URL has been denied".to_string()),
-                            embeds: vec![],
-                            flags: None,
-                            tts: None
-                        })).exec().await.expect("callback");
+                    client.reply_content(&command, "URL has been denied").await.expect("reply");
                 }
             },
             Err(_) => {
-                client.interaction_callback(command.id, &command.token,
-                    &InteractionResponse::ChannelMessageWithSource(CallbackData {
-                        allowed_mentions: None,
-                        components: None,
-                        content: Some("Invalid URL. Example: `https://example.com`".to_string()),
-                        embeds: vec![],
-                        flags: None,
-                        tts: None
-                    })).exec().await.expect("callback");
+                client.reply_content(&command, "Invalid URL. Example: `https://example.com`").await.expect("reply");
             }
         }
-        Ok(false)
+        Ok(())
     }
 }
